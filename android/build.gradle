@@ -1,4 +1,4 @@
-group = "com.vs_plugin.ai_face_analyzer.ai_face_analyzer"
+group = "com.vs_plugin.ai_face_analyzer"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    namespace = "com.vs_plugin.ai_face_analyzer.ai_face_analyzer"
+    namespace = "com.vs_plugin.ai_face_analyzer"
 
     compileSdk = 35
 
@@ -48,6 +48,12 @@ android {
     }
 
     dependencies {
+        implementation("org.tensorflow:tensorflow-lite:2.17.0")
+
+        implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
+
+        implementation("org.tensorflow:tensorflow-lite-metadata:0.4.4")
+
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito:mockito-core:5.0.0")
     }
