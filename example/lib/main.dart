@@ -1,29 +1,22 @@
+import 'dart:io';
+
 import 'package:ai_face_analyzer/ai_face_analyzer.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      title: 'AI Face Analyzer',
+      home: const HomePage(),
     );
   }
 }
@@ -36,36 +29,126 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String message = "Not initialized";
+  File? _image;
+  FaceAnalysis? _analysis;
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
-    initialize();
+    AiFaceAnalyzer.initialize();
   }
 
-  Future<void> initialize() async {
+  Future<void> _pickImage() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.image);
 
-    await AiFaceAnalyzer.initialize();
+    if (result != null) {
+      final path = result.files.single.path!;
 
-    final analysis = await AiFaceAnalyzer.analyzeImage(
-      imagePath: "dummy.jpg",
+      setState(() {
+        _loading = true;
+        _image = File(path);
+        _analysis = null;
+      });
+
+      try {
+        final result = await AiFaceAnalyzer.analyzeImage(imagePath: path);
+
+        setState(() {
+          _analysis = result;
+        });
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    AiFaceAnalyzer.dispose();
+    super.dispose();
+  }
+
+  Widget _buildCardItemField(label, value) {
+    return Row(
+      children: [
+        Expanded(flex: 1, child: Text(label)),
+        Expanded(flex: 3, child: Text("$value")),
+      ],
     );
+  }
 
-    setState(() {
-      message =  analysis.toString();
-    });
+  Widget _buildCardItem(face) {
+    return Column(
+      children: [
+        _buildCardItemField("Left: ", face.left),
+        _buildCardItemField("Top: ", face.top),
+        _buildCardItemField("Right: ", face.right),
+        _buildCardItemField("Bottom: ", face.bottom),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("AI Face Analyzer"),
-      ),
-      body: Center(
-        child: Text(message),
+      appBar: AppBar(title: const Text("AI Face Analyzer")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Center(
+              child: ElevatedButton(
+                onPressed: _pickImage,
+                child: const Text("Pick Image"),
+              ),
+            ),
+
+            const SizedBox(height: 5),
+
+            if (_image != null) Image.file(_image!, height: 250),
+
+            const SizedBox(height: 5),
+
+            if (_loading) Center(child: const CircularProgressIndicator()),
+
+            if (_analysis != null) ...[
+              Text(
+                "Face Detected: ${_analysis!.faceDetected}",
+                style: const TextStyle(fontSize: 18),
+              ),
+
+              const SizedBox(height: 10),
+
+              Text(
+                "Face Count: ${_analysis!.faceCount}",
+                style: const TextStyle(fontSize: 18),
+              ),
+
+              const SizedBox(height: 20),
+
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _analysis!.faces.length,
+                  itemBuilder: (_, index) {
+                    final face = _analysis!.faces[index];
+
+                    return Card(
+                      child: ListTile(
+                        title: Text("Face ${index + 1}"),
+                        subtitle: _buildCardItem(face),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

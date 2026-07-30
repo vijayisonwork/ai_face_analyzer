@@ -1,40 +1,24 @@
 package com.vs_plugin.ai_face_analyzer.core
 
-import com.vs_plugin.ai_face_analyzer.utils.ResultConstants
-import com.vs_plugin.ai_face_analyzer.model.FaceAnalysis
+import android.content.Context
+import com.vs_plugin.ai_face_analyzer.detector.MlKitFaceDetector
+import com.vs_plugin.ai_face_analyzer.model.FaceDetectionResult
 
 class FaceAnalyzerManager(
     context: Context
 ) {
 
-    private lateinit var tfLite: TensorFlowInterpreter
+    private val detector = MlKitFaceDetector(context)
 
-    fun initialize(): Boolean {
-        private val tfLite =
-            TensorFlowInterpreter(context)
-
-        tfLite.initialize()
-
-        return true
-    }
-
-    fun analyzeImage(imagePath: String): FaceAnalysis {
-
-        check(initialized) {
-            "FaceAnalyzerManager has not been initialized."
-        }
-
-        return FaceAnalysis(
-            faceDetected = true,
-            faceCount = 1,
-            blurScore = 0.12,
-            brightness = 185,
+    fun detectFaces(
+        imagePath: String,
+        onSuccess: (List<FaceDetectionResult>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        detector.detectFaces(
+            imagePath = imagePath,
+            onSuccess = onSuccess,
+            onFailure = onFailure
         )
-    }
-
-    fun dispose(): Boolean {
-        tfLite.close()
-
-        return true
     }
 }

@@ -13,10 +13,3 @@ object MethodConstants {
 object ArgumentConstants {
     const val IMAGE_PATH = "imagePath"
 }
-
-object ResultConstants {
-    const val FACE_DETECTED = "faceDetected"
-    const val FACE_COUNT = "faceCount"
-    const val BLUR_SCORE = "blurScore"
-    const val BRIGHTNESS = "brightness"
-}

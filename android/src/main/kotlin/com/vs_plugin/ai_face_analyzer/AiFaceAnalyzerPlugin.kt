@@ -1,31 +1,25 @@
 package com.vs_plugin.ai_face_analyzer
 
-import com.vs_plugin.ai_face_analyzer.channel.MethodDispatcher
+import android.content.Context
+import com.vs_plugin.ai_face_analyzer.core.FaceAnalyzerManager
 import com.vs_plugin.ai_face_analyzer.utils.ChannelConstants
+import com.vs_plugin.ai_face_analyzer.utils.MethodConstants
+import com.vs_plugin.ai_face_analyzer.utils.ArgumentConstants
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
-import com.vs_plugin.ai_face_analyzer.core.FaceAnalyzerManager
 
-class AiFaceAnalyzerPlugin :
-  FlutterPlugin,
-  MethodCallHandler {
+class AiFaceAnalyzerPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
   private lateinit var channel: MethodChannel
+  private lateinit var context: Context
+  private lateinit var manager: FaceAnalyzerManager
 
-  private lateinit var dispatcher: MethodDispatcher
+  override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
 
-  override fun onAttachedToEngine(
-    binding: FlutterPlugin.FlutterPluginBinding
-  ) {
+    context = binding.applicationContext
 
-    val manager = FaceAnalyzerManager(
-      binding.applicationContext
-    )
-
-    dispatcher = MethodDispatcher(manager)
+    manager = FaceAnalyzerManager(context)
 
     channel = MethodChannel(
       binding.binaryMessenger,
@@ -37,19 +31,68 @@ class AiFaceAnalyzerPlugin :
 
   override fun onMethodCall(
     call: MethodCall,
-    result: Result
+    result: MethodChannel.Result
   ) {
 
-    dispatcher.dispatch(
-      call,
-      result
-    )
+    when (call.method) {
+
+      MethodConstants.INITIALIZE -> {
+        result.success(null)
+      }
+
+      MethodConstants.ANALYZE_IMAGE -> {
+
+        val arguments = call.arguments<Map<String, Any?>>()
+
+        val imagePath = arguments?.get(ArgumentConstants.IMAGE_PATH) as? String
+
+        if (imagePath == null) {
+          result.error(
+            "INVALID_ARGUMENT",
+            "imagePath is required",
+            null
+          )
+          return
+        }
+
+        manager.detectFaces(
+          imagePath = imagePath,
+
+          onSuccess = { faces ->
+
+            val response = faces.map {
+
+              mapOf(
+                "left" to it.left,
+                "top" to it.top,
+                "right" to it.right,
+                "bottom" to it.bottom
+              )
+            }
+
+            result.success(response)
+          },
+
+          onFailure = {
+
+            result.error(
+              "FACE_DETECTION_FAILED",
+              it.message,
+              null
+            )
+          }
+        )
+      }
+
+      MethodConstants.DISPOSE -> {
+        result.success(null)
+      }
+
+      else -> result.notImplemented()
+    }
   }
 
-  override fun onDetachedFromEngine(
-    binding: FlutterPlugin.FlutterPluginBinding
-  ) {
-
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
   }
 }
