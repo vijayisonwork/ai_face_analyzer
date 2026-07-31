@@ -7,8 +7,7 @@ import '../models/face.dart';
 import '../models/face_analysis.dart';
 
 class MethodChannelClient {
-  static const MethodChannel _channel =
-  MethodChannel(ChannelConstants.channel);
+  static const MethodChannel _channel = MethodChannel(ChannelConstants.channel);
 
   Future<void> initialize() async {
     await _channel.invokeMethod(MethodConstants.initialize);
@@ -17,18 +16,13 @@ class MethodChannelClient {
   Future<FaceAnalysis> analyzeImage(String imagePath) async {
     final result = await _channel.invokeMethod<List<dynamic>>(
       MethodConstants.analyzeImage,
-      {
-        ArgumentConstants.imagePath: imagePath,
-      },
+      {ArgumentConstants.imagePath: imagePath},
     );
 
-    final faces = (result ?? [])
-        .map(
-          (e) => Face.fromMap(
-        Map<Object?, Object?>.from(e as Map),
-      ),
-    )
-        .toList();
+    final faces =
+        (result ?? [])
+            .map((e) => Face.fromMap(Map<Object?, Object?>.from(e as Map)))
+            .toList();
 
     return FaceAnalysis.fromFaces(faces);
   }

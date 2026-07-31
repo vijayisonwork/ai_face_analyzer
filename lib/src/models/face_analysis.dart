@@ -1,5 +1,6 @@
 import 'face.dart';
 
+/// Result of analyzing an image.
 class FaceAnalysis {
   final bool faceDetected;
   final int faceCount;

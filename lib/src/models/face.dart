@@ -1,3 +1,4 @@
+/// Represents a detected face.
 class Face {
   final double left;
   final double top;

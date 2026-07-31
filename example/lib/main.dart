@@ -77,7 +77,8 @@ class _HomePageState extends State<HomePage> {
     return Row(
       children: [
         Expanded(flex: 1, child: Text(label)),
-        Expanded(flex: 3, child: Text("$value")),
+        Text(":"),
+        Expanded(flex: 3, child: Text(" $value")),
       ],
     );
   }
@@ -85,10 +86,10 @@ class _HomePageState extends State<HomePage> {
   Widget _buildCardItem(face) {
     return Column(
       children: [
-        _buildCardItemField("Left: ", face.left),
-        _buildCardItemField("Top: ", face.top),
-        _buildCardItemField("Right: ", face.right),
-        _buildCardItemField("Bottom: ", face.bottom),
+        _buildCardItemField("Left", face.left),
+        _buildCardItemField("Top", face.top),
+        _buildCardItemField("Right", face.right),
+        _buildCardItemField("Bottom", face.bottom),
       ],
     );
   }
@@ -101,35 +102,90 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Center(
-              child: ElevatedButton(
-                onPressed: _pickImage,
-                child: const Text("Pick Image"),
+            if (_analysis == null) ...[
+              Center(
+                child: ElevatedButton(
+                  onPressed: _pickImage,
+                  child: const Text("Pick Image"),
+                ),
               ),
-            ),
 
-            const SizedBox(height: 5),
+              const SizedBox(height: 5),
+            ],
 
-            if (_image != null) Image.file(_image!, height: 250),
+            if (_image != null)
+              Image.file(
+                _image!,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
 
-            const SizedBox(height: 5),
+            const SizedBox(height: 10),
 
             if (_loading) Center(child: const CircularProgressIndicator()),
 
             if (_analysis != null) ...[
-              Text(
-                "Face Detected: ${_analysis!.faceDetected}",
-                style: const TextStyle(fontSize: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "Face Detected",
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            Text(":", style: const TextStyle(fontSize: 18)),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                " ${_analysis!.faceDetected}",
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "Face Count",
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            Text(":", style: const TextStyle(fontSize: 18)),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                " ${_analysis!.faceCount}",
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(width: 10),
+
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: _pickImage,
+                      child: const Text("Pick Image"),
+                    ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 10),
-
-              Text(
-                "Face Count: ${_analysis!.faceCount}",
-                style: const TextStyle(fontSize: 18),
-              ),
-
-              const SizedBox(height: 20),
 
               Expanded(
                 child: ListView.builder(

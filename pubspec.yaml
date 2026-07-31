@@ -1,10 +1,17 @@
 name: ai_face_analyzer
-description: "A Flutter plugin for on-device face detection using Google ML Kit with native Android and iOS implementations."
+description: Flutter plugin for on-device face detection using Google ML Kit with native Android implementation.
 version: 1.0.0
-homepage: https://github.com/vijayisonwork/ai_face_analyzer.git
-repository: https://github.com/vijayisonwork/ai_face_analyzer.git
-documentation: https://github.com/vijayisonwork/ai_face_analyzer.git
+homepage: https://github.com/vijayisonwork/ai_face_analyzer
+repository: https://github.com/vijayisonwork/ai_face_analyzer
+documentation: https://github.com/vijayisonwork/ai_face_analyzer
 issue_tracker: https://github.com/vijayisonwork/ai_face_analyzer/issues
+
+topics:
+  - flutter
+  - mlkit
+  - face-detection
+  - ai
+  - android
 
 environment:
   sdk: ">=3.7.2 <4.0.0"
@@ -19,12 +26,19 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
 
-
 flutter:
   plugin:
     platforms:
       android:
         package: com.vs_plugin.ai_face_analyzer
         pluginClass: AiFaceAnalyzerPlugin
-      ios:
-        pluginClass: AiFaceAnalyzerPlugin
+
+screenshots:
+  - description: Group Faces Detected
+    path: screenshots/group_detected.jpeg
+
+  - description: Single Face Detected
+    path: screenshots/single_detected.jpeg
+
+  - description: No Face Detected
+    path: screenshots/no_face_detected.jpeg

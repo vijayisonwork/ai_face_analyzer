@@ -1,6 +1,7 @@
 import 'method_channel/method_channel_client.dart';
 import 'models/face_analysis.dart';
 
+/// Entry point for the AI Face Analyzer plugin.
 class AiFaceAnalyzer {
   AiFaceAnalyzer._();
 
@@ -10,9 +11,7 @@ class AiFaceAnalyzer {
     await _client.initialize();
   }
 
-  static Future<FaceAnalysis> analyzeImage({
-    required String imagePath,
-  }) {
+  static Future<FaceAnalysis> analyzeImage({required String imagePath}) {
     return _client.analyzeImage(imagePath);
   }
 
