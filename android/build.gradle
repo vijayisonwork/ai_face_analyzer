@@ -1,4 +1,4 @@
-group = "com.vs_plugin.ai_face_analyzer.ai_face_analyzer"
+group = "com.vs_plugin.ai_face_analyzer"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    namespace = "com.vs_plugin.ai_face_analyzer.ai_face_analyzer"
+    namespace = "com.vs_plugin.ai_face_analyzer"
 
     compileSdk = 35
 
@@ -48,6 +48,8 @@ android {
     }
 
     dependencies {
+        implementation("com.google.mlkit:face-detection:16.1.7")
+
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito:mockito-core:5.0.0")
     }

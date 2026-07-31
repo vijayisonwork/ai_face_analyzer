@@ -1,4 +1,4 @@
-package com.vs_plugin.ai_face_analyzer.ai_face_analyzer
+package com.vs_plugin.ai_face_analyzer
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel

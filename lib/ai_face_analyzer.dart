@@ -1,8 +1,5 @@
+library;
 
-import 'ai_face_analyzer_platform_interface.dart';
-
-class AiFaceAnalyzer {
-  Future<String?> getPlatformVersion() {
-    return AiFaceAnalyzerPlatform.instance.getPlatformVersion();
-  }
-}
+export 'src/ai_face_analyzer.dart';
+export 'src/models/face.dart';
+export 'src/models/face_analysis.dart';
